@@ -5,7 +5,6 @@ set -euo pipefail
 kShellUser="${1:-ps}"
 kShellUserHome="/home/$kShellUser" # $HOME needn't be per expectation
 kLogFile="/var/log/vm_setup.log"
-kDotfilesRepoUrl="https://github.com/therootusr/dotfiles.git"
 kZshPlugins="git kubectl helm docker terraform"
 
 # Logging function
@@ -100,54 +99,30 @@ function f_install_kubectl() {
   f_log "INFO" "kubectl installed to $kShellUserHome/.local/bin/kubectl"
 }
 
-function f_setup_zsh_omz() {
-  f_log "INFO" "setting up Zsh and Oh My Zsh..."
-  local omz_dir="$kShellUserHome/.oh-my-zsh"
+function f_setup_zsh_shell() {
+  f_log "INFO" "setting up Zsh shell config for $kShellUser..."
+
+  local zsh_path
+  zsh_path=$(command -v zsh)
+  if [ -z "$zsh_path" ]; then
+    f_log "ERROR" "zsh not found in PATH"
+    return 1
+  fi
 
   # Change default shell for the user
-  usermod --shell $(which zsh) $kShellUser
+  usermod --shell "$zsh_path" "$kShellUser"
 
-  # Install Oh My Zsh (unattended)
-  if [ ! -d "$omz_dir" ]; then
-    runuser -l $kShellUser -c 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended'
+  local script_dir
+  script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+  local source_script="$script_dir/setup_zsh.sh"
+  if [ ! -f "$source_script" ]; then
+    f_log "ERROR" "setup_zsh.sh not found at $source_script"
+    return 1
   fi
 
-  # Configure plugins
-  # We use sed to replace the default plugins line
-  sed -i "s/^plugins=(git)/plugins=($kZshPlugins)/" "$kShellUserHome/.zshrc"
-}
-
-function f_setup_p10k() {
-  f_log "INFO" "installing Powerlevel10k theme..."
-  local theme_dir="$kShellUserHome/.oh-my-zsh/custom/themes/powerlevel10k"
-
-  if [ ! -d "$theme_dir" ]; then
-    runuser -l $kShellUser -c "git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $theme_dir"
-  fi
-
-  # Set ZSH_THEME in .zshrc
-  sed -i 's/^ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$kShellUserHome/.zshrc"
-  echo 'POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true' >> "$kShellUserHome/.zshrc"
-
-  # Add basic p10k config handling (optional: user might need to run p10k configure manually for full wizard)
-  # Download a default config to auto configure? Leave it for user for now.
-  f_log "INFO" "powerlevel10k installed. User can run 'p10k configure' to configure it (config wizard disabled)"
-}
-
-function f_run_external_repo_script() {
-  f_log "INFO" "setting up dotfiles..."
-  local repo_dir="$kShellUserHome/workspace/personal/dotfiles"
-  runuser -l $kShellUser -c "mkdir -p $repo_dir"
-  # run as user to avoid perm issues later
-  runuser -l $kShellUser -c "cd $repo_dir && git clone $kDotfilesRepoUrl ."
-
-  local script_full_path="$repo_dir/config/setup.sh"
-  if [ -f "$script_full_path" ]; then
-    f_log "INFO" "executing $script_full_path..."
-    runuser -l $kShellUser -c "$script_full_path"
-  else
-    f_log "ERROR" "script $script_full_path not found in the cloned repo"
-  fi
+  # Pipe via stdin so the target user doesn't need access to this file's path.
+  runuser -l "$kShellUser" -c "ZSH_PLUGINS=\"$kZshPlugins\" bash -s" < "$source_script"
 }
 
 function f_cleanup() {
@@ -172,10 +147,7 @@ function f_main() {
   f_install_docker
   f_install_kubectl
 
-  f_setup_zsh_omz
-  f_setup_p10k
-
-  f_run_external_repo_script
+  f_setup_zsh_shell
 
   f_cleanup
   f_log "INFO" "setup complete"
