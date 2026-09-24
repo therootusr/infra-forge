@@ -325,8 +325,8 @@ f_maybe_download_verify_extract shellcheck \
 
 #----------- hwatch -------------
 f_maybe_download_verify_extract hwatch \
-  https://github.com/blacknon/hwatch/releases/download/0.3.20/hwatch-0.3.20.x86_64-unknown-linux-musl.tar.gz \
-  b35ba7477b47c29bc79dfba2432b820f21be47e1b4ef162e8617179c137fa150 \
+  https://github.com/blacknon/hwatch/releases/download/0.4.2/hwatch-0.4.2.x86_64-unknown-linux-musl.tar.gz \
+  9d1c6a61b1f04f9e1aa84fe18634a6296aa22061c62d39416a3fa23fba066803 \
   ~/.local/bin --strip-components=1 bin/hwatch
 
 #----------- ripgrep -------------
@@ -347,10 +347,10 @@ f_maybe_download_verify_extract rg \
 
 #----------- fzf -------------
 
-# sha256 from https://github.com/junegunn/fzf/releases/download/v0.74.0/fzf_0.74.0_checksums.txt
+# sha256 from https://github.com/junegunn/fzf/releases/download/v0.74.4/fzf_0.74.4_checksums.txt
 f_maybe_download_verify_extract fzf \
-  https://github.com/junegunn/fzf/releases/download/v0.74.0/fzf-0.74.0-linux_amd64.tar.gz \
-  cf919f05b7581b4c744d764eaa704665d61dd6d3ca785f0df2351281dff60cda \
+  https://github.com/junegunn/fzf/releases/download/v0.74.4/fzf-0.74.4-linux_amd64.tar.gz \
+  05e6813a337cc722c3ed07e54a764b75cc5d671e2e60459db0ba696ee5fa7504 \
   ~/.local/bin fzf
 
 #----------- zoxide -------------
@@ -372,8 +372,8 @@ f_maybe_download_verify_extract zoxide \
 # published for this release, so sha256 is self-computed. The prebuilt binary
 # needs glibc >= 2.34 (Ubuntu 22.04 ships 2.35).
 f_maybe_download_verify_extract nvim \
-  https://github.com/neovim/neovim/releases/download/v0.12.4/nvim-linux-x86_64.tar.gz \
-  012bf3fcac5ade43914df3f174668bf64d05e049a4f032a388c027b1ebd78628 \
+  https://github.com/neovim/neovim/releases/download/v0.12.5/nvim-linux-x86_64.tar.gz \
+  bce0f56eda1f1b1db6eee8f4133d7a38813ea07933837dd1777411ca384c6875 \
   ~/.local --strip-components=1
 
 #----------- clangd -------------
@@ -393,14 +393,14 @@ fi
 
 #----------- tree-sitter cli -------------
 
-# Prebuilt binary is a lone gzip (this version publishes no tarball/zip) with no
-# checksum file, so sha256 is self-computed. Pinned to 0.25.10, NOT the latest
-# 0.26.x: the 0.26 binaries need glibc 2.39, but the 22.04 target has 2.35.
-# 0.25.10 is the newest release built against an older glibc (2.34). Note the
-# floor is non-monotonic across versions, so re-check it on any bump.
+# Prebuilt binary is a lone gzip with no checksum file, so sha256 is
+# self-computed. The 0.26+ binaries need glibc 2.39, so this won't run on
+# Ubuntu 22.04 (glibc 2.35); pin 0.25.10 there, the newest release built
+# against an older glibc (2.34). Note the floor is non-monotonic across
+# versions, so re-check it on any bump.
 f_maybe_install_from_gz tree-sitter \
-  https://github.com/tree-sitter/tree-sitter/releases/download/v0.25.10/tree-sitter-linux-x64.gz \
-  8283ddba69253c698f6e987ba0e2f9285e079c8db4d36ebe1394b5bb3a0ebdfd
+  https://github.com/tree-sitter/tree-sitter/releases/download/v0.27.0/tree-sitter-linux-x64.gz \
+  20a1f39ec1c45f2211492dcb8881c802b643b554bb196869a29ac3778277fa77
 
 #----------- kubectl -------------
 
@@ -414,27 +414,27 @@ f_maybe_download_verify_install kubectl \
 
 #----------- helm -------------
 
-# Binaries for https://github.com/helm/helm/releases/tag/v4.2.2 are hosted
+# Binaries for https://github.com/helm/helm/releases/tag/v4.3.0 are hosted
 # on get.helm.sh (not attached as GitHub release assets)
 f_maybe_download_verify_extract helm \
-  https://get.helm.sh/helm-v4.2.2-linux-amd64.tar.gz \
-  9adafecab4d406853bba163a70e9f104f47dbbf65ce24b7653bae7e36150bcb6 \
+  https://get.helm.sh/helm-v4.3.0-linux-amd64.tar.gz \
+  86584a54def73570558f66f5111cc53dfed56689637ae32c1201205d494f54fb \
   ~/.local/bin --strip-components=1 linux-amd64/helm
 
 #----------- aws cli -------------
 
 # https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 f_maybe_install_from_zip aws \
-  https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.35.15.zip \
-  50692e3e2a606007d7789b5a307dca41452a965dea1f3d3687972da6e5adc86c \
+  https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.37.1.zip \
+  61a79950dfb436985611a258d3a8f85a47e13498fcc72c7d8d0597f5c9fde133 \
   ./aws/install --install-dir ~/.local/aws-cli --bin-dir ~/.local/bin
 
 #----------- terraform -------------
 
-# sha256 from https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_SHA256SUMS
+# sha256 from https://releases.hashicorp.com/terraform/1.16.4/terraform_1.16.4_SHA256SUMS
 f_maybe_install_from_zip terraform \
-  https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_linux_amd64.zip \
-  73bbb8f5188ad75d4fb853fd100ae4d7e146ef7af7db18776109642fdb7759d2 \
+  https://releases.hashicorp.com/terraform/1.16.4/terraform_1.16.4_linux_amd64.zip \
+  dc94af0eef1147718ad7c8daea792ed199e3e0492eec180d0adafa2a65a879df \
   mv -v ./terraform ~/.local/bin
 
 cd "$kStartingDir"
@@ -507,8 +507,8 @@ f_maybe_install_from_script codex https://chatgpt.com/codex/install.sh
 # uv setup + tools
 #------------------------------------------------------------------------------
 if ! command -v uv &> /dev/null; then
-  kUvVersion=0.11.6
-  kUvSha256=aa342a53abe42364093506d7704214d2cdca30b916843e520bc67759a5d20132
+  kUvVersion=0.12.18
+  kUvSha256=e38d97460b98ebfd31b197de0fe9fa578add4bc8ba0179b203dd3f87b99f98e6
   kUvArchive="uv-x86_64-unknown-linux-musl.tar.gz"
   echo "WARNING: uv not found, installing uv ${kUvVersion}"
   f_maybe_download_verify_extract uv \
