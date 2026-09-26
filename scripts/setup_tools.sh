@@ -477,6 +477,9 @@ go install golang.org/x/tools/gopls@latest
 
 go install carvel.dev/ytt/cmd/ytt@latest
 
+# replaces skopeo
+go install github.com/regclient/regclient/cmd/regctl@latest
+
 # buf: protobuf lint / breaking-change / codegen driver.
 #
 # Trade-off vs. the release tarball at github.com/bufbuild/buf/releases: that
@@ -552,7 +555,7 @@ sudo apt update
 sudo DEBIAN_FRONTEND=noninteractive LANG=C.UTF-8 TZ=UTC apt install -y \
     bat ca-certificates clang-format elinks file fio git \
     gnupg iotop jq less locales mandoc nmap openssh-client \
-    postgresql-client-common rocksdb-tools skopeo tzdata vim zsh
+    postgresql-client-common rocksdb-tools tzdata vim zsh # skopeo
 # https://github.com/sharkdp/bat
 # Setting up bat (0.19.0-1ubuntu0.1) ...
 ln -sv /usr/bin/batcat "$HOME/.local/bin/bat"
