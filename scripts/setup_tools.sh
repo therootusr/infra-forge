@@ -477,8 +477,10 @@ go install golang.org/x/tools/gopls@latest
 
 go install carvel.dev/ytt/cmd/ytt@latest
 
+# using func skopeo = podman run docker://quay.io/skopeo/stable:latest $@
+# skopeo project may be more mature, so back to skopeo
 # replaces skopeo
-go install github.com/regclient/regclient/cmd/regctl@latest
+# go install github.com/regclient/regclient/cmd/regctl@latest
 
 # buf: protobuf lint / breaking-change / codegen driver.
 #
